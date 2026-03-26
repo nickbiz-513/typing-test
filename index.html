@@ -1,21 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="HippoType - Professional Speed Typing Test Game with adaptive difficulty, multiple languages, and real code snippets">
-    <meta name="keywords" content="typing test, speed typing, WPM test, typing game, code typing">
-    <meta name="author" content="HippoType Team">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="description" content="HippoType - Professional Speed Typing Test Game" />
     <title>HippoType - Professional Speed Typing Game</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
 </head>
 <body>
     <!-- Loading Screen -->
@@ -31,39 +28,27 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
+    <!-- Login Modal (shown before the game) -->
     <div id="login-modal" class="login-modal" aria-hidden="true">
         <div class="login-card">
-            <svg class="login-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                <path d="M584.2 96.36c-28.88-1.701-54.71 17.02-79.74 26.49C490 88.22 455.9 64 416 64c-11.25 0-22 2.252-32 5.877V56C384 42.75 373.2 32 360 32h-16C330.8 32 320 42.75 320 56v49C285.1 79.62 241.2 64 192 64C85.1 64 0 135.6 0 224v232C0 469.3 10.75 480 24 480h48C85.25 480 96 469.3 96 456v-62.87C128.4 407.5 166.8 416 208 416s79.63-8.492 112-22.87V456c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24V288h128v32c0 8.837 7.163 16 16 16h32c8.837 0 16-7.163 16-16V288c17.62 0 32-14.38 32-32l-.0001-96.07C639.1 127.8 616.4 98.25 584.2 96.36zM447.1 176c-8.875 0-16-7.125-16-16S439.1 144 448 144s16 7.125 16 16S456.9 176 447.1 176z"/>
-            </svg>
             <h2>Welcome to HippoType</h2>
-            <p class="login-sub">Sign in or create an account to start typing</p>
-
-            <div class="login-tabs">
-                <button id="tab-login" class="login-tab active">Sign In</button>
-                <button id="tab-signup" class="login-tab">Sign Up</button>
-            </div>
+            <p class="login-sub"></p>
 
             <label class="input-label">
                 Username
-                <input id="login-username" type="text" autocomplete="username" placeholder="Enter username">
+                <input id="login-username" type="text" autocomplete="username" />
             </label>
 
             <label class="input-label">
                 Password
-                <input id="login-password" type="password" autocomplete="current-password" placeholder="Enter password">
+                <input id="login-password" type="password" autocomplete="current-password" />
             </label>
 
             <div id="login-error" class="login-error" aria-live="polite"></div>
 
             <div class="login-actions">
-                <button id="login-btn" class="btn primary-btn login-submit-btn">Sign In</button>
+                <button id="login-btn" class="btn primary-btn">Sign In</button>
             </div>
-
-            <p class="login-offline-note">
-                <small>💡 No Google Sheets URL set? Login works offline with local storage.</small>
-            </p>
         </div>
     </div>
 
@@ -104,44 +89,19 @@
                         <option value="hard">Hard</option>
                         <option value="expert">Expert</option>
                     </select>
-                    <span id="adaptive-badge" class="adaptive-badge hidden" title="Adaptive difficulty is active">🤖</span>
                 </div>
 
                 <div class="control-group">
                     <label for="language">Language:</label>
                     <select id="language">
                         <option value="en" selected>English</option>
-                        <option value="es">Spanish</option>
-                        <option value="fr">French</option>
-                        <option value="de">German</option>
                         <option value="code">Code</option>
-                        <option value="steno">Stenography</option>
-                    </select>
-                </div>
-
-                <!-- Code Language Sub-selector (visible only when Code is selected) -->
-                <div class="control-group" id="code-lang-group" style="display:none;">
-                    <label for="codeLanguage">Syntax:</label>
-                    <select id="codeLanguage">
-                        <option value="c">C</option>
-                        <option value="cpp">C++</option>
-                        <option value="python" selected>Python</option>
-                        <option value="java">Java</option>
-                        <option value="react">React</option>
                     </select>
                 </div>
 
                 <button id="newGameBtn" class="btn primary-btn">
                     <span class="btn-text">New Game</span>
                     <span class="btn-icon">⌨️</span>
-                </button>
-
-                <button id="customTextBtn" class="btn secondary-btn" title="Paste your own text">
-                    📝
-                </button>
-
-                <button id="leaderboardBtn" class="btn secondary-btn" title="View Leaderboard" aria-label="Leaderboard">
-                    🏆
                 </button>
 
                 <button id="settingsBtn" class="btn secondary-btn" aria-label="Settings">
@@ -180,7 +140,7 @@
         <!-- Live Stats Panel -->
         <section class="stats-panel" id="statsPanel">
             <div class="stat-item">
-                <span class="stat-label" id="live-wpm-label">WPM</span>
+                <span class="stat-label">WPM</span>
                 <span class="stat-value" id="wpm">0</span>
             </div>
             <div class="stat-item">
@@ -208,9 +168,6 @@
 
         <!-- Game Area -->
         <section id="game-area" class="game-area" tabindex="0" aria-label="Typing area">
-            <!-- Hidden Input Funnel for Stenography -->
-            <input type="text" id="steno-funnel" class="steno-funnel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; opacity: 0; width: 1px; height: 1px; border: none; overflow: hidden; pointer-events: none;">
-            
             <div id="target-words" class="target-words">
                 <p class="placeholder-text">Press "New Game" to start typing</p>
             </div>
@@ -234,7 +191,7 @@
                     <div class="result-icon">⚡</div>
                     <div class="result-label">Speed</div>
                     <div class="result-value" id="finalWPM">0</div>
-                    <div class="result-unit" id="final-wpm-unit">WPM</div>
+                    <div class="result-unit">WPM</div>
                 </div>
 
                 <div class="result-card">
@@ -314,9 +271,7 @@
                         <select id="themeSelect">
                             <option value="ocean">Ocean</option>
                             <option value="forest">Forest</option>
-                            <option value="sunset">Sunset</option>
                             <option value="matrix">Matrix</option>
-                            <option value="dark">Dark</option>
                         </select>
                     </label>
 
@@ -324,6 +279,11 @@
                         <span>Font Size:</span>
                         <input type="range" id="fontSize" min="16" max="32" value="24">
                         <span id="fontSizeValue">24px</span>
+                    </label>
+
+                    <label class="setting-item checkbox">
+                        <input type="checkbox" id="smoothCaret" checked>
+                        <span>Smooth caret animation</span>
                     </label>
                 </div>
 
@@ -334,18 +294,12 @@
                         <input type="checkbox" id="blindMode">
                         <span>Blind mode (hide typed text)</span>
                     </label>
-
-                    <label class="setting-item checkbox">
-                        <input type="checkbox" id="adaptiveMode">
-                        <span>🤖 Adaptive Difficulty (auto-adjust based on performance)</span>
-                    </label>
                 </div>
 
                 <div class="settings-group">
                     <h3>📊 Data</h3>
                     <button class="btn secondary-btn" id="exportStats">Export Statistics</button>
                     <button class="btn danger-btn" id="resetStats">Reset All Data</button>
-                    <button class="btn secondary-btn" id="logoutBtn">🚪 Logout</button>
                 </div>
 
                 <div class="settings-group">
@@ -355,57 +309,12 @@
         </div>
     </div>
 
-    <!-- Custom Text Modal -->
-    <div id="custom-text-modal" class="modal hidden" role="dialog" aria-hidden="true">
-        <div class="modal-content custom-text-modal-content">
-            <div class="modal-header">
-                <h2>📝 Custom Text</h2>
-                <button class="close-modal" id="closeCustomText" aria-label="Close">×</button>
-            </div>
-            <div class="custom-text-body">
-                <p>Paste your own essay, code snippet, or study notes below to practice typing on material you care about.</p>
-                <textarea id="customTextArea" class="custom-textarea" rows="10" placeholder="Paste your text here..."></textarea>
-                <div class="custom-text-actions">
-                    <button id="useCustomTextBtn" class="btn primary-btn">Use This Text</button>
-                    <button id="clearCustomTextBtn" class="btn secondary-btn">Clear</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Leaderboard Modal -->
-    <div id="leaderboard-modal" class="modal hidden" role="dialog" aria-hidden="true">
-        <div class="modal-content leaderboard-modal-content">
-            <div class="modal-header">
-                <h2>🏆 Leaderboard</h2>
-                <button class="close-modal" id="closeLeaderboard" aria-label="Close">×</button>
-            </div>
-            <div class="leaderboard-body">
-                <!-- Loading State -->
-                <div id="leaderboard-loading" class="leaderboard-status hidden">
-                    <div class="loader-dots"><span></span><span></span><span></span></div>
-                    <p>Fetching top scores...</p>
-                </div>
-                <!-- Error State -->
-                <div id="leaderboard-error" class="leaderboard-status hidden error-text"></div>
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="leaderboard-table hidden" id="leaderboardTable">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Username</th>
-                                <th id="lb-speed-header">WPM</th>
-                                <th>Accuracy</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardBody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <!-- Virtual Keyboard (kept hidden, no toggle in settings) -->
+    <div id="keyboard" class="keyboard hidden" aria-hidden="true">
+        <!-- Simple keyboard layout (non-functional placeholder) -->
+        <div class="keyboard-row">
+            <div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div><div class="key">T</div>
+            <div class="key">Y</div><div class="key">U</div><div class="key">I</div><div class="key">O</div><div class="key">P</div>
         </div>
     </div>
 
