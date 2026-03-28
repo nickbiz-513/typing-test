@@ -418,8 +418,16 @@ function initializeEventListeners() {
             elements['code-lang-group'].style.display = 'none';
         }
         
-        // CRITICAL FIX: Trigger a full hard reset to immediately update the text area
-        startNewGame(); 
+         startNewGame();
+        // SMOOTH TRANSITION: Auto-focus the correct input so the user can type instantly
+        setTimeout(() => {
+            if (e.target.value === 'steno' && elements['steno-funnel']) {
+                elements['steno-funnel'].focus();
+            } else {
+                // Focus the standard game area/hidden input depending on your layout
+                document.body.focus(); 
+            }
+        }, 50);
     });
     elements.codeLanguage?.addEventListener('change', () => { gameState.isCustomText = false; generateText(); });
 
