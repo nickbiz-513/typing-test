@@ -19,6 +19,8 @@ let gameState = {
 
 let auth = { username: null };
 
+let rescueTokens = 3; // FIXED: Added missing rescueTokens variable
+
 let userProfile = {
     stats: { totalTests: 0, bestWPM: 0, avgWPM: 0, avgAccuracy: 0, streak: 0 },
     achievements: {
@@ -101,6 +103,7 @@ const sentenceBanks = {
             "The plaintiff's attorney has filed a motion for discovery.",
             "Transcribing rapid dialogue is the ultimate test of a reporter."
         ]
+    }
 };
 
 // ──── Code Snippet Banks ────
@@ -152,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
      'code-lang-group','codeLanguage','adaptive-badge','customTextBtn','custom-text-modal',
      'closeCustomText','customTextArea','useCustomTextBtn','clearCustomTextBtn','adaptiveMode','logoutBtn',
      'steno-funnel', 'leaderboardBtn', 'leaderboard-modal', 'closeLeaderboard', 'leaderboardTable',
-     'leaderboardBody', 'leaderboard-loading', 'leaderboard-error', 'lb-speed-header'
+     'leaderboardBody', 'leaderboard-loading', 'leaderboard-error', 'lb-speed-header', 'resultsPanel', 'rescueTokens'
     ].forEach(id => { elements[id] = document.getElementById(id); });
 
     // FIX 3: Explicitly map the camelCase variables so the Leaderboard doesn't crash
@@ -163,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.leaderboardTable = elements['leaderboardTable'];
     elements.leaderboardBody = elements['leaderboardBody'];
     elements.lbSpeedHeader = elements['lb-speed-header'];
+    elements.resultsPanel = elements['results-panel'];
 
     loadUserProfile();
     loadAuth();
@@ -319,6 +323,13 @@ function hideLoadingScreen() {
             setTimeout(() => { elements['loading-screen'].style.display = 'none'; }, 500);
         }
     }, 500);
+}
+
+function closeSettings() {
+    if (elements['settings-modal']) {
+        elements['settings-modal'].classList.add('hidden');
+        elements['settings-modal'].setAttribute('aria-hidden', 'true');
+    }
 }
 
 function loadUserProfile() {
@@ -765,11 +776,11 @@ function endGame() {
     updateChart();
 
 // Compute final stats
-    const timeInSeconds = Math.max(1, (Date.now() - gameState.startTime) / 1000);
-    const timeInMinutes = Math.max(timeInSeconds / 60, 1 / 60);
+    const timeInSeconds = Math.max(1, (Date.now() - gameState.startTime) / 1000); // FIXED: was timeInSecs
+    const timeInMinutes = Math.max(timeInSeconds / 60, 1 / 60); // FIXED: was timeInMins
     let wpm = Math.round((gameState.correctChars / 5) / timeInMinutes) || 0;
     let rawWPM = Math.round((gameState.totalChars / 5) / timeInMinutes) || 0;
-    const accuracy = gameState.totalChars > 0 ? Math.round((gameState.correctChars / gameState.totalChars) * 100) : 0;
+    const accuracy = gameState.totalChars > 0 ? Math.round((gameState.correctChars / gameState.totalChars) * 100) : 0; // FIXED: was acc
 
     // ANTI-CHEAT: Final Telemetry Hard Cap
     const maxSpeed = (gameState.language === 'steno') ? 600 : 300;
@@ -780,31 +791,31 @@ function endGame() {
     userProfile.stats.totalTests = parseInt(userProfile.stats.totalTests || 0, 10) + 1;
     if (wpm > userProfile.stats.bestWPM) userProfile.stats.bestWPM = wpm;
     if (wpm >= 80) unlockAchievement('speedDemon');
-    if (acc === 100 && gameState.totalChars > 20) unlockAchievement('perfectionist');
+    if (accuracy === 100 && gameState.totalChars > 20) unlockAchievement('perfectionist'); // FIXED: was acc
 
     const prevC = userProfile.stats.totalTests - 1;
     userProfile.stats.avgWPM = Math.round(((userProfile.stats.avgWPM || 0) * prevC + wpm) / (prevC + 1));
-    userProfile.stats.avgAccuracy = Math.round(((userProfile.stats.avgAccuracy || 0) * prevC + acc) / (prevC + 1));
+    userProfile.stats.avgAccuracy = Math.round(((userProfile.stats.avgAccuracy || 0) * prevC + accuracy) / (prevC + 1)); // FIXED: was acc
 
     // Adaptive Difficulty
     if (userProfile.preferences.adaptiveMode && !gameState.isCustomText && elements.difficulty) {
         const diffs = ['easy','medium','hard','expert'];
         let idx = diffs.indexOf(gameState.difficulty);
-        if (wpm >= 80 && acc >= 95 && idx < diffs.length - 1) {
+        if (wpm >= 80 && accuracy >= 95 && idx < diffs.length - 1) { // FIXED: was acc
             elements.difficulty.value = diffs[idx + 1];
-        } else if ((wpm <= 30 || acc < 85) && idx > 0) {
+        } else if ((wpm <= 30 || accuracy < 85) && idx > 0) { // FIXED: was acc
             elements.difficulty.value = diffs[idx - 1];
         }
     }
 
     if (elements.finalWPM) elements.finalWPM.textContent = wpm;
-    if (elements.finalAccuracy) elements.finalAccuracy.textContent = acc + '%';
-    if (elements.finalTime) elements.finalTime.textContent = formatTime(timeInSecs);
+    if (elements.finalAccuracy) elements.finalAccuracy.textContent = accuracy + '%'; // FIXED: was acc
+    if (elements.finalTime) elements.finalTime.textContent = formatTime(timeInSeconds); // FIXED: was timeInSecs
     if (elements.finalCombo) elements.finalCombo.textContent = gameState.maxCombo;
     if (elements.totalChars) elements.totalChars.textContent = gameState.totalChars;
     if (elements.correctCharsCount) elements.correctCharsCount.textContent = gameState.correctChars;
     if (elements.totalErrorsCount) elements.totalErrorsCount.textContent = gameState.totalErrors;
-    if (elements.rawWPM) elements.rawWPM.textContent = Math.round((gameState.totalChars / 5) / timeInMins) || 0;
+    if (elements.rawWPM) elements.rawWPM.textContent = Math.round((gameState.totalChars / 5) / timeInMinutes) || 0; // FIXED: was timeInMins
 
     if (elements['results-panel']) elements['results-panel'].classList.remove('hidden');
 
@@ -815,14 +826,14 @@ if (auth.username) {
         const actualLanguage = gameState.language === 'code' ? gameState.codeLanguage : gameState.language;
         
         // Calculate Strokes Per Minute (only applies to Steno mode)
-        const spm = (gameState.language === 'steno') ? Math.round(gameState.totalChars / timeInMins) : 0;
+        const spm = (gameState.language === 'steno') ? Math.round(gameState.totalChars / timeInMinutes) : 0; // FIXED: was timeInMins
 
         // Send the exact 10 data points needed by the database (Date is generated on the server)
         fetchGS('submitScore', {
             username: auth.username,
             wpm: wpm,
             spm: spm,
-            accuracy: acc, 
+            accuracy: accuracy, // FIXED: was acc
             total_errors: gameState.totalErrors,
             total_chars: gameState.totalChars,
             correct_chars: gameState.correctChars,
