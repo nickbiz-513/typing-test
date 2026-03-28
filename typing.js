@@ -758,7 +758,8 @@ function endGame() {
     if (wpm > maxSpeed) wpm = maxSpeed;
     if (rawWPM > maxSpeed) rawWPM = maxSpeed;
 
-    userProfile.stats.totalTests++;
+ // FIX: Force JavaScript to treat the local storage data as an integer
+    userProfile.stats.totalTests = parseInt(userProfile.stats.totalTests || 0, 10) + 1;
     if (wpm > userProfile.stats.bestWPM) userProfile.stats.bestWPM = wpm;
     if (wpm >= 80) unlockAchievement('speedDemon');
     if (acc === 100 && gameState.totalChars > 20) unlockAchievement('perfectionist');
