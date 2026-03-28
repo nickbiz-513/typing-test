@@ -581,6 +581,12 @@ function displayText() {
 }
 
 function handleKeyDown(e) {
+    // SECURITY LOCK: Do not allow typing if the results panel is showing
+    if (elements.resultsPanel && !elements.resultsPanel.classList.contains('hidden')) return;
+    
+    // ANTI-CHEAT: Ignore keys that are being held down automatically by the OS
+    if (e.repeat) return;
+
     if (e.key === ' ') e.preventDefault();
     if (e.ctrlKey || e.altKey || e.metaKey || ['Shift','Control','Alt','Meta','CapsLock','Tab','Escape'].includes(e.key)) return;
 
@@ -740,10 +746,17 @@ function endGame() {
     if (gameState.chartInterval) clearInterval(gameState.chartInterval);
     updateChart();
 
-    const timeInSecs = Math.max(1, (Date.now() - (gameState.startTime || Date.now())) / 1000);
-    const timeInMins = Math.max(timeInSecs / 60, 1 / 60);
-    const wpm = Math.round((gameState.correctChars / 5) / timeInMins) || 0;
-    const acc = gameState.totalChars > 0 ? Math.round((gameState.correctChars / gameState.totalChars) * 100) : 0;
+// Compute final stats
+    const timeInSeconds = Math.max(1, (Date.now() - gameState.startTime) / 1000);
+    const timeInMinutes = Math.max(timeInSeconds / 60, 1 / 60);
+    let wpm = Math.round((gameState.correctChars / 5) / timeInMinutes) || 0;
+    let rawWPM = Math.round((gameState.totalChars / 5) / timeInMinutes) || 0;
+    const accuracy = gameState.totalChars > 0 ? Math.round((gameState.correctChars / gameState.totalChars) * 100) : 0;
+
+    // ANTI-CHEAT: Final Telemetry Hard Cap
+    const maxSpeed = (gameState.language === 'steno') ? 600 : 300;
+    if (wpm > maxSpeed) wpm = maxSpeed;
+    if (rawWPM > maxSpeed) rawWPM = maxSpeed;
 
     userProfile.stats.totalTests++;
     if (wpm > userProfile.stats.bestWPM) userProfile.stats.bestWPM = wpm;
@@ -820,13 +833,22 @@ function updateStats() {
         if (elements.combo) elements.combo.textContent = '0';
         return;
     }
+    
     const mins = Math.max(1, Date.now() - (gameState.startTime||Date.now())) / 60000;
-    elements.wpm.textContent = Math.round((gameState.correctChars / 5) / Math.max(mins, 1/60)) || 0;
+    
+    // 1. Calculate the raw WPM first
+    let wpm = Math.round((gameState.correctChars / 5) / Math.max(mins, 1/60)) || 0;
+    
+    // 2. ANTI-CHEAT: Apply the Hard Cap ceiling before displaying
+    const maxSpeed = (gameState.language === 'steno') ? 600 : 300;
+    if (wpm > maxSpeed) wpm = maxSpeed;
+    
+    // 3. Update the UI safely
+    elements.wpm.textContent = wpm;
     elements.accuracy.textContent = (gameState.totalChars > 0 ? Math.round((gameState.correctChars / gameState.totalChars) * 100) : 100) + '%';
     if (elements.errors) elements.errors.textContent = gameState.totalErrors;
     if (elements.combo) elements.combo.textContent = gameState.combo;
 }
-
 function updateProgress() {
     if (elements.progressBar) elements.progressBar.style.width = Math.min(100, (gameState.currentCharIndex / Math.max(1, gameState.targetText.length)) * 100) + '%';
 }
