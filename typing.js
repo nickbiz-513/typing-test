@@ -86,11 +86,21 @@ const sentenceBanks = {
         expert: ["Die erkenntnistheoretischen Prinzipien der modernen Wissenschaft erfordern eine strenge Bewertung und eine tiefgreifende Analyse jedes beobachteten Phänomens."]
     },
     steno: {
-        easy: ["T- T- T- KWR- KWR- KWR-", "HR- HR- HR- S- S- S-", "AOEU AOEU AOEU"],
-        medium: ["THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", "TO BE OR NOT TO BE THAT IS THE QUESTION", "STENO IS FAST AND FUN"],
-        hard: ["Pursuant to the aforementioned statute, the defendant respectfully submits this motion for summary judgment.", "Objection, your honor. Calls for speculation.", "The witness will please state their full name for the record."],
-        expert: ["IN WITNESS WHEREOF, the parties hereto have caused this Agreement to be executed by their duly authorized representatives as of the day and year first above written.", "COMES NOW the Plaintiff, by and through counsel, and hereby files this Complaint for Damages against Defendant."]
-    }
+        easy: [
+            "The quick brown fox jumps over the lazy dog.",
+            "Please record the witness statement accurately.",
+            "The court is now in session for the hearing."
+        ],
+        medium: [
+            "The defendant is required to answer the questions truthfully.",
+            "Stenography requires immense focus and muscle memory.",
+            "All evidence must be marked and submitted to the clerk."
+        ],
+        hard: [
+            "Cross examination of the primary witness will begin immediately.",
+            "The plaintiff's attorney has filed a motion for discovery.",
+            "Transcribing rapid dialogue is the ultimate test of a reporter."
+        ]
 };
 
 // ──── Code Snippet Banks ────
