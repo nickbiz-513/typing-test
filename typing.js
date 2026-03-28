@@ -810,17 +810,25 @@ function endGame() {
 
     saveUserProfile(); updateUI(); applyPreferences();
 
-    // Post to Google Sheets Leaderboard
-    if (auth.username) {
+if (auth.username) {
+        // Resolve the exact language (handles the coding language glitch)
+        const actualLanguage = gameState.language === 'code' ? gameState.codeLanguage : gameState.language;
+        
+        // Calculate Strokes Per Minute (only applies to Steno mode)
+        const spm = (gameState.language === 'steno') ? Math.round(gameState.totalChars / timeInMins) : 0;
+
+        // Send the exact 10 data points needed by the database (Date is generated on the server)
         fetchGS('submitScore', {
             username: auth.username,
-            wpm, rawWpm: Math.round((gameState.totalChars / 5) / timeInMins) || 0,
-            accuracy: acc, totalErrors: gameState.totalErrors,
-            totalChars: gameState.totalChars, correctChars: gameState.correctChars,
-            maxCombo: gameState.maxCombo, mode: gameState.testMode,
+            wpm: wpm,
+            spm: spm,
+            accuracy: acc, 
+            total_errors: gameState.totalErrors,
+            total_chars: gameState.totalChars,
+            correct_chars: gameState.correctChars,
+            mode: gameState.testMode,
             difficulty: elements.difficulty?.value || gameState.difficulty,
-            language: gameState.language, codeLanguage: gameState.codeLanguage,
-            timeSeconds: Math.round(timeInSecs),
+            language: actualLanguage
         });
     }
 }
